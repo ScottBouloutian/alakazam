@@ -1,0 +1,12 @@
+{
+	"name": "alakazam",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "dev",
+	"workspaceFolder": "/workspace",
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash"
+	},
+	"extensions": [
+		"dart-code.flutter"
+	]
+}
