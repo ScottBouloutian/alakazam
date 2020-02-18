@@ -12,3 +12,5 @@ services:
     privileged: true
     ports:
       - "3000:3000"
+    environment:
+      - GPG_TTY=/dev/pts/0
