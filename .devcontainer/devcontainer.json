@@ -6,6 +6,7 @@
 	"settings": { 
 		"terminal.integrated.shell.linux": "/bin/bash"
 	},
+	"postCreateCommand": "flutter packages get",
 	"extensions": [
 		"dart-code.flutter"
 	]

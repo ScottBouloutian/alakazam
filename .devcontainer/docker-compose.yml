@@ -10,3 +10,5 @@ services:
       - ~/.gnupg:/home/cirrus/.gnupg
       - ~/.gitconfig:/home/cirrus/.gitconfig
     privileged: true
+    ports:
+      - "3000:3000"

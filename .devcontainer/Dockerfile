@@ -1,10 +1,8 @@
-FROM cirrusci/flutter
+FROM cirrusci/flutter:beta
 
 WORKDIR /home/cirrus/sdks/flutter
 RUN sudo apt-get update \
-    && git checkout master \
-    && git pull \
-    && flutter channel stable \
-    && flutter upgrade
+    && sudo apt-get install -y gpg-agent \
+    && flutter config --enable-web
 
 WORKDIR /workspace
