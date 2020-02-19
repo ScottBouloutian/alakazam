@@ -4,7 +4,7 @@
 	"service": "dev",
 	"workspaceFolder": "/workspace",
 	"settings": { 
-		"terminal.integrated.shell.linux": "/bin/bash"
+		"terminal.integrated.shell.linux": "/bin/zsh"
 	},
 	"postCreateCommand": "flutter packages get",
 	"extensions": [
