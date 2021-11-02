@@ -1,9 +1,37 @@
-FROM cirrusci/flutter:beta
+# Update VARIANT in devcontainer.json to pick a Dart version
+ARG VARIANT=2
+FROM dart:${VARIANT}
 
-RUN sudo apt-get update \
-    && sudo apt-get install -y gpg-agent zsh \
-    && flutter config --enable-web \
-    && sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended" \
-    && git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k
+# [Option] Install zsh
+ARG INSTALL_ZSH="true"
+# [Option] Upgrade OS packages to their latest versions
+ARG UPGRADE_PACKAGES="false"
 
-WORKDIR /workspace
+# Install needed packages and setup non-root user. Use a separate RUN statement to add your own dependencies.
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+COPY library-scripts/*.sh /tmp/library-scripts/
+RUN apt-get update && /bin/bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
+
+# Add bin location to path
+ENV PUB_CACHE="/usr/local/share/pub-cache"
+ENV PATH="${PUB_CACHE}/bin:${PATH}"
+RUN if ! cat /etc/group | grep -e "^pub-cache:" > /dev/null 2>&1; then groupadd -r pub-cache; fi \
+    && usermod -a -G pub-cache ${USERNAME} \
+    && umask 0002 \
+    && mkdir -p ${PUB_CACHE} \
+    && chown :pub-cache ${PUB_CACHE} \
+    && sed -i -e "s/export PATH=/export PATH=\/usr\/local\/share\/pub-cache:/" /etc/profile.d/00-restore-env.sh
+
+# Install additional OS packages.
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends xz-utils
+
+# Install Flutter
+USER ${USERNAME}
+ENV PATH="$PATH:/home/${USERNAME}/flutter/bin"
+RUN wget -O /tmp/flutter.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_2.5.3-stable.tar.xz \
+    && tar xf /tmp/flutter.tar.xz -C ~ \
+    && flutter precache
