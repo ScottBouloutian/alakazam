@@ -1,13 +1,28 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.202.5/containers/dart
 {
-	"name": "alakazam",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "dev",
-	"workspaceFolder": "/workspace",
-	"settings": { 
-		"terminal.integrated.shell.linux": "/bin/zsh"
+	"name": "Dart (Community)",
+	"runArgs": ["--init"],
+	"build": {
+		"dockerfile": "Dockerfile",
+		// Update VARIANT to pick a Dart version
+		"args": {
+			"VARIANT": "2",
+			"UPGRADE_PACKAGES": "true"
+		}
 	},
-	"postCreateCommand": "flutter packages get",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": { },
+
+	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"dart-code.flutter"
-	]
+		"dart-code.dart-code",
+		"dart-code.flutter",
+		"ms-azuretools.vscode-docker"
+	],
+
+	"forwardPorts": [9100],
+	"postCreateCommand": "sudo chown -R vscode:vscode /workspaces && flutter pub get",
+	"remoteUser": "vscode"
 }
